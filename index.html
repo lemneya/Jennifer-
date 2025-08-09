@@ -4,9 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lawyer Productivity App - Agent MVP</title>
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    <meta name="description" content="Lightweight lawyer productivity assistant: task, document tag, and time entry suggestions.">
+    <meta name="theme-color" content="#3b82f6">
+
+    <!-- Performance: preconnect to Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <!-- Built Tailwind CSS -->
+    <link rel="stylesheet" href="public/styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
     <style>
         body {
             font-family: 'Inter', sans-serif;
@@ -14,31 +22,31 @@
             min-height: 100vh;
             display: flex;
             justify-content: center;
-            align-items: flex-start; /* Align to top for better content visibility */
+            align-items: flex-start;
             padding: 2rem 0;
         }
-        .container {
+        .app-container {
             background-color: #ffffff;
-            border-radius: 1.5rem; /* More rounded corners */
+            border-radius: 1.5rem;
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
             padding: 2.5rem;
             max-width: 90%;
-            width: 800px; /* Increased max-width */
+            width: 800px;
             transition: all 0.3s ease-in-out;
-            margin: 20px; /* Add margin for spacing */
+            margin: 20px;
         }
         @media (max-width: 768px) {
-            .container {
+            .app-container {
                 padding: 1.5rem;
                 max-width: 95%;
             }
         }
         input, select, button, textarea {
-            border-radius: 0.75rem; /* Consistent rounded corners */
+            border-radius: 0.75rem;
         }
         button {
             transition: all 0.2s ease-in-out;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow for buttons */
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
         button:hover {
             transform: translateY(-2px);
@@ -55,23 +63,28 @@
             bottom: 0;
             width: 50px;
             height: 3px;
-            background-color: #3b82f6; /* Blue underline */
+            background-color: #3b82f6;
             border-radius: 9999px;
         }
         .agent-suggestion {
-            background-color: #e0f2fe; /* Light blue background for suggestions */
-            border-left: 4px solid #2563eb; /* Darker blue left border */
+            background-color: #e0f2fe;
+            border-left: 4px solid #2563eb;
             padding: 0.75rem 1rem;
             border-radius: 0.75rem;
             margin-top: 0.5rem;
             font-style: italic;
-            color: #1e40af; /* Dark blue text */
+            color: #1e40af;
+        }
+        /* Respect users who prefer reduced motion */
+        @media (prefers-reduced-motion: reduce) {
+            * { transition: none !important; }
+            button:hover { transform: none !important; }
         }
     </style>
 </head>
 <body class="flex flex-col items-center justify-center p-4">
 
-    <div class="container mx-auto p-8 bg-white rounded-2xl shadow-xl space-y-8">
+    <div class="app-container mx-auto p-8 bg-white rounded-2xl shadow-xl space-y-8">
         <h1 class="text-4xl font-extrabold text-center text-gray-800 mb-8 section-title">
             <span role="img" aria-label="Scales of Justice">⚖️</span> Lawyer Agent Assistant
         </h1>
@@ -110,7 +123,7 @@
                 <button id="suggestTaskBtn" class="w-full bg-blue-600 text-white py-3 px-6 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
                     Suggest Task
                 </button>
-                <div id="suggestedTask" class="agent-suggestion hidden"></div>
+                <div id="suggestedTask" class="agent-suggestion hidden" aria-live="polite"></div>
             </div>
 
             <!-- Document Tagging Suggestion -->
@@ -124,7 +137,7 @@
                 <button id="suggestDocumentTagBtn" class="w-full bg-blue-600 text-white py-3 px-6 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
                     Suggest Tags
                 </button>
-                <div id="suggestedDocumentTag" class="agent-suggestion hidden"></div>
+                <div id="suggestedDocumentTag" class="agent-suggestion hidden" aria-live="polite"></div>
             </div>
 
             <!-- Time Entry Suggestion -->
@@ -145,16 +158,14 @@
                 <button id="suggestTimeEntryBtn" class="w-full bg-blue-600 text-white py-3 px-6 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
                     Suggest Time
                 </button>
-                <div id="suggestedTimeEntry" class="agent-suggestion hidden"></div>
+                <div id="suggestedTimeEntry" class="agent-suggestion hidden" aria-live="polite"></div>
             </div>
 
-             <!-- Message Box for Alerts -->
+            <!-- Message Box for Alerts -->
             <div id="messageBox" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center hidden">
-                <div class="bg-white p-6 rounded-lg shadow-xl max-w-sm w-full text-center">
+                <div class="bg-white p-6 rounded-lg shadow-xl max-w-sm w-full text-center" role="dialog" aria-modal="true" aria-describedby="messageContent" tabindex="-1">
                     <p id="messageContent" class="text-lg font-semibold text-gray-800 mb-4"></p>
-                    <button id="messageBoxCloseBtn" class="bg-blue-600 text-white py-2 px-5 rounded-lg hover:bg-blue-700">
-                        OK
-                    </button>
+                    <button id="messageBoxCloseBtn" class="bg-blue-600 text-white py-2 px-5 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">OK</button>
                 </div>
             </div>
 
@@ -162,16 +173,56 @@
     </div>
 
     <script>
-        // Helper function to show a custom message box instead of alert()
+        // Accessible message box helpers
+        let lastFocusedElement = null;
+        let keydownHandler = null;
+
+        function closeMessageBox() {
+            const overlay = document.getElementById('messageBox');
+            overlay.classList.add('hidden');
+            if (keydownHandler) {
+                document.removeEventListener('keydown', keydownHandler);
+                keydownHandler = null;
+            }
+            if (lastFocusedElement && typeof lastFocusedElement.focus === 'function') {
+                lastFocusedElement.focus();
+            }
+        }
+
         function showMessageBox(message) {
-            const messageBox = document.getElementById('messageBox');
+            const overlay = document.getElementById('messageBox');
+            const dialog = overlay.querySelector('[role="dialog"]');
+            const okButton = document.getElementById('messageBoxCloseBtn');
             const messageContent = document.getElementById('messageContent');
+
             messageContent.textContent = message;
-            messageBox.classList.remove('hidden');
+            overlay.classList.remove('hidden');
+
+            lastFocusedElement = document.activeElement;
+            okButton.focus();
+
+            // Close on Escape and trap focus on the OK button
+            keydownHandler = (e) => {
+                if (e.key === 'Escape') {
+                    e.preventDefault();
+                    closeMessageBox();
+                } else if (e.key === 'Tab') {
+                    e.preventDefault();
+                    okButton.focus();
+                }
+            };
+            document.addEventListener('keydown', keydownHandler);
+
+            // Backdrop click closes dialog when clicking outside the dialog panel
+            overlay.addEventListener('click', (e) => {
+                if (e.target === overlay) {
+                    closeMessageBox();
+                }
+            }, { once: true });
         }
 
         document.getElementById('messageBoxCloseBtn').addEventListener('click', () => {
-            document.getElementById('messageBox').classList.add('hidden');
+            closeMessageBox();
         });
 
         // Get elements
@@ -187,11 +238,7 @@
         const suggestTimeEntryBtn = document.getElementById('suggestTimeEntryBtn');
         const suggestedTimeEntryDiv = document.getElementById('suggestedTimeEntry');
 
-        /**
-         * Agent logic to suggest a task based on the case status.
-         * @param {string} status The current status of the case.
-         * @returns {string} The suggested task or a default message.
-         */
+        // Agent logic to suggest a task based on the case status
         function suggestTask(status) {
             switch (status) {
                 case 'Intake':
@@ -211,11 +258,7 @@
             }
         }
 
-        /**
-         * Agent logic to suggest document tags based on the document name.
-         * @param {string} docName The name of the document.
-         * @returns {string} The suggested tags or a default message.
-         */
+        // Agent logic to suggest document tags based on the document name
         function suggestDocumentTag(docName) {
             const lowerDocName = docName.toLowerCase();
             if (lowerDocName.includes('complaint')) return '#Pleading #Litigation #InitialFiling';
@@ -229,11 +272,7 @@
             return 'Suggested Tags: #Document #CaseFile';
         }
 
-        /**
-         * Agent logic to suggest a typical time entry duration based on the selected task.
-         * @param {string} task The selected task.
-         * @returns {string} The suggested time duration or a default message.
-         */
+        // Agent logic to suggest a typical time entry duration based on the selected task
         function suggestTimeEntry(task) {
             switch (task) {
                 case 'Drafting Complaint':
@@ -281,23 +320,6 @@
             suggestedTimeEntryDiv.textContent = suggestTimeEntry(task);
             suggestedTimeEntryDiv.classList.remove('hidden');
         });
-
-        // Ensure responsive canvas (though not directly used, good practice)
-        window.addEventListener('load', () => {
-            // No canvas element in this specific demo, but this is where canvas responsiveness would go.
-            // For example, if you had a canvas:
-            // const canvas = document.getElementById('myCanvas');
-            // if (canvas) {
-            //     function resizeCanvas() {
-            //         canvas.width = canvas.parentElement.clientWidth;
-            //         canvas.height = canvas.parentElement.clientHeight;
-            //         // Redraw canvas content here if needed
-            //     }
-            //     resizeCanvas();
-            //     window.addEventListener('resize', resizeCanvas);
-            // }
-        });
-
     </script>
 </body>
 </html>
