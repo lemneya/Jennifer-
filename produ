@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lawyer Productivity App - Agent MVP</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start; /* Align to top for better content visibility */
+            padding: 2rem 0;
+        }
+        .container {
+            background-color: #ffffff;
+            border-radius: 1.5rem; /* More rounded corners */
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            padding: 2.5rem;
+            max-width: 90%;
+            width: 800px; /* Increased max-width */
+            transition: all 0.3s ease-in-out;
+            margin: 20px; /* Add margin for spacing */
+        }
+        @media (max-width: 768px) {
+            .container {
+                padding: 1.5rem;
+                max-width: 95%;
+            }
+        }
+        input, select, button, textarea {
+            border-radius: 0.75rem; /* Consistent rounded corners */
+        }
+        button {
+            transition: all 0.2s ease-in-out;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow for buttons */
+        }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+        }
+        .section-title {
+            position: relative;
+            padding-bottom: 0.5rem;
+        }
+        .section-title::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 50px;
+            height: 3px;
+            background-color: #3b82f6; /* Blue underline */
+            border-radius: 9999px;
+        }
+        .agent-suggestion {
+            background-color: #e0f2fe; /* Light blue background for suggestions */
+            border-left: 4px solid #2563eb; /* Darker blue left border */
+            padding: 0.75rem 1rem;
+            border-radius: 0.75rem;
+            margin-top: 0.5rem;
+            font-style: italic;
+            color: #1e40af; /* Dark blue text */
+        }
+    </style>
+</head>
+<body class="flex flex-col items-center justify-center p-4">
+
+    <div class="container mx-auto p-8 bg-white rounded-2xl shadow-xl space-y-8">
+        <h1 class="text-4xl font-extrabold text-center text-gray-800 mb-8 section-title">
+            <span role="img" aria-label="Scales of Justice">⚖️</span> Lawyer Agent Assistant
+        </h1>
+
+        <!-- Case Details Section -->
+        <div class="space-y-6">
+            <h2 class="text-2xl font-semibold text-gray-700 mb-4 section-title">Case Details</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label for="caseName" class="block text-sm font-medium text-gray-700 mb-1">Case Name:</label>
+                    <input type="text" id="caseName" placeholder="e.g., Smith v. Johnson" class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 text-gray-800">
+                </div>
+                <div>
+                    <label for="caseStatus" class="block text-sm font-medium text-gray-700 mb-1">Case Status:</label>
+                    <select id="caseStatus" class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 text-gray-800 bg-white">
+                        <option value="">Select Status</option>
+                        <option value="Intake">Intake</option>
+                        <option value="Discovery">Discovery Phase</option>
+                        <option value="Pre-Trial">Pre-Trial Motions</option>
+                        <option value="Trial">Trial Preparation</option>
+                        <option value="Settlement">Settlement Negotiations</option>
+                        <option value="Post-Trial">Post-Trial Activities</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Agent Assistant Section -->
+        <div class="space-y-6 mt-8">
+            <h2 class="text-2xl font-semibold text-gray-700 mb-4 section-title">Agent Assistant</h2>
+
+            <!-- Task Suggestion -->
+            <div class="bg-gray-50 p-6 rounded-xl shadow-inner space-y-4">
+                <h3 class="text-xl font-medium text-gray-700">Task Suggestions</h3>
+                <p class="text-gray-600 text-sm">Based on the case status, the agent suggests the next steps.</p>
+                <button id="suggestTaskBtn" class="w-full bg-blue-600 text-white py-3 px-6 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                    Suggest Task
+                </button>
+                <div id="suggestedTask" class="agent-suggestion hidden"></div>
+            </div>
+
+            <!-- Document Tagging Suggestion -->
+            <div class="bg-gray-50 p-6 rounded-xl shadow-inner space-y-4">
+                <h3 class="text-xl font-medium text-gray-700">Document Tagging</h3>
+                <p class="text-gray-600 text-sm">Enter a document name, and the agent suggests relevant tags.</p>
+                <div>
+                    <label for="documentName" class="block text-sm font-medium text-gray-700 mb-1">Document Name:</label>
+                    <input type="text" id="documentName" placeholder="e.g., Smith_Complaint.pdf" class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 text-gray-800">
+                </div>
+                <button id="suggestDocumentTagBtn" class="w-full bg-blue-600 text-white py-3 px-6 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                    Suggest Tags
+                </button>
+                <div id="suggestedDocumentTag" class="agent-suggestion hidden"></div>
+            </div>
+
+            <!-- Time Entry Suggestion -->
+            <div class="bg-gray-50 p-6 rounded-xl shadow-inner space-y-4">
+                <h3 class="text-xl font-medium text-gray-700">Time Entry Assistant</h3>
+                <p class="text-gray-600 text-sm">Select a task, and the agent suggests a typical time duration.</p>
+                <div>
+                    <label for="selectedTaskForTime" class="block text-sm font-medium text-gray-700 mb-1">Select Task:</label>
+                    <select id="selectedTaskForTime" class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 text-gray-800 bg-white">
+                        <option value="">Select a Task</option>
+                        <option value="Drafting Complaint">Drafting Complaint</option>
+                        <option value="Reviewing Discovery">Reviewing Discovery</option>
+                        <option value="Client Meeting">Client Meeting</option>
+                        <option value="Court Appearance">Court Appearance</option>
+                        <option value="Legal Research">Legal Research</option>
+                    </select>
+                </div>
+                <button id="suggestTimeEntryBtn" class="w-full bg-blue-600 text-white py-3 px-6 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                    Suggest Time
+                </button>
+                <div id="suggestedTimeEntry" class="agent-suggestion hidden"></div>
+            </div>
+
+             <!-- Message Box for Alerts -->
+            <div id="messageBox" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center hidden">
+                <div class="bg-white p-6 rounded-lg shadow-xl max-w-sm w-full text-center">
+                    <p id="messageContent" class="text-lg font-semibold text-gray-800 mb-4"></p>
+                    <button id="messageBoxCloseBtn" class="bg-blue-600 text-white py-2 px-5 rounded-lg hover:bg-blue-700">
+                        OK
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        // Helper function to show a custom message box instead of alert()
+        function showMessageBox(message) {
+            const messageBox = document.getElementById('messageBox');
+            const messageContent = document.getElementById('messageContent');
+            messageContent.textContent = message;
+            messageBox.classList.remove('hidden');
+        }
+
+        document.getElementById('messageBoxCloseBtn').addEventListener('click', () => {
+            document.getElementById('messageBox').classList.add('hidden');
+        });
+
+        // Get elements
+        const caseStatusSelect = document.getElementById('caseStatus');
+        const suggestTaskBtn = document.getElementById('suggestTaskBtn');
+        const suggestedTaskDiv = document.getElementById('suggestedTask');
+
+        const documentNameInput = document.getElementById('documentName');
+        const suggestDocumentTagBtn = document.getElementById('suggestDocumentTagBtn');
+        const suggestedDocumentTagDiv = document.getElementById('suggestedDocumentTag');
+
+        const selectedTaskForTimeSelect = document.getElementById('selectedTaskForTime');
+        const suggestTimeEntryBtn = document.getElementById('suggestTimeEntryBtn');
+        const suggestedTimeEntryDiv = document.getElementById('suggestedTimeEntry');
+
+        /**
+         * Agent logic to suggest a task based on the case status.
+         * @param {string} status The current status of the case.
+         * @returns {string} The suggested task or a default message.
+         */
+        function suggestTask(status) {
+            switch (status) {
+                case 'Intake':
+                    return '✅ Draft Engagement Letter and Retainer Agreement.';
+                case 'Discovery':
+                    return '📝 Prepare and send Interrogatories or Document Requests.';
+                case 'Pre-Trial':
+                    return '⚖️ File Motion for Summary Judgment.';
+                case 'Trial':
+                    return '🗓️ Prepare witness list and exhibits for trial.';
+                case 'Settlement':
+                    return '🤝 Draft Settlement Agreement and Release.';
+                case 'Post-Trial':
+                    return '📋 Prepare Post-Trial Motions or Appeal Brief.';
+                default:
+                    return 'No specific task suggestion for this status yet. Please select a case status.';
+            }
+        }
+
+        /**
+         * Agent logic to suggest document tags based on the document name.
+         * @param {string} docName The name of the document.
+         * @returns {string} The suggested tags or a default message.
+         */
+        function suggestDocumentTag(docName) {
+            const lowerDocName = docName.toLowerCase();
+            if (lowerDocName.includes('complaint')) return '#Pleading #Litigation #InitialFiling';
+            if (lowerDocName.includes('answer')) return '#Response #Pleading #Defense';
+            if (lowerDocName.includes('interrogatories')) return '#Discovery #Questionnaire';
+            if (lowerDocName.includes('contract')) return '#Agreement #LegalDocument #Draft';
+            if (lowerDocName.includes('motion')) return '#Motion #CourtFiling';
+            if (lowerDocName.includes('brief')) return '#Brief #LegalArgument';
+            if (lowerDocName.includes('settlement')) return '#Settlement #Agreement';
+            if (lowerDocName.includes('retainer')) return '#ClientAgreement #Retainer';
+            return 'Suggested Tags: #Document #CaseFile';
+        }
+
+        /**
+         * Agent logic to suggest a typical time entry duration based on the selected task.
+         * @param {string} task The selected task.
+         * @returns {string} The suggested time duration or a default message.
+         */
+        function suggestTimeEntry(task) {
+            switch (task) {
+                case 'Drafting Complaint':
+                    return 'Suggested Time: 2.0 - 4.0 hours';
+                case 'Reviewing Discovery':
+                    return 'Suggested Time: 1.5 - 3.0 hours';
+                case 'Client Meeting':
+                    return 'Suggested Time: 0.5 - 1.0 hours';
+                case 'Court Appearance':
+                    return 'Suggested Time: 1.0 - 2.0 hours';
+                case 'Legal Research':
+                    return 'Suggested Time: 1.0 - 2.5 hours';
+                default:
+                    return 'No typical time suggestion for this task. Please select a task.';
+            }
+        }
+
+        // Event Listeners for buttons
+        suggestTaskBtn.addEventListener('click', () => {
+            const status = caseStatusSelect.value;
+            if (!status) {
+                showMessageBox('Please select a Case Status first to get a task suggestion.');
+                return;
+            }
+            suggestedTaskDiv.textContent = suggestTask(status);
+            suggestedTaskDiv.classList.remove('hidden');
+        });
+
+        suggestDocumentTagBtn.addEventListener('click', () => {
+            const docName = documentNameInput.value.trim();
+            if (!docName) {
+                showMessageBox('Please enter a Document Name first to get tag suggestions.');
+                return;
+            }
+            suggestedDocumentTagDiv.textContent = suggestDocumentTag(docName);
+            suggestedDocumentTagDiv.classList.remove('hidden');
+        });
+
+        suggestTimeEntryBtn.addEventListener('click', () => {
+            const task = selectedTaskForTimeSelect.value;
+            if (!task) {
+                showMessageBox('Please select a Task to get a time entry suggestion.');
+                return;
+            }
+            suggestedTimeEntryDiv.textContent = suggestTimeEntry(task);
+            suggestedTimeEntryDiv.classList.remove('hidden');
+        });
+
+        // Ensure responsive canvas (though not directly used, good practice)
+        window.addEventListener('load', () => {
+            // No canvas element in this specific demo, but this is where canvas responsiveness would go.
+            // For example, if you had a canvas:
+            // const canvas = document.getElementById('myCanvas');
+            // if (canvas) {
+            //     function resizeCanvas() {
+            //         canvas.width = canvas.parentElement.clientWidth;
+            //         canvas.height = canvas.parentElement.clientHeight;
+            //         // Redraw canvas content here if needed
+            //     }
+            //     resizeCanvas();
+            //     window.addEventListener('resize', resizeCanvas);
+            // }
+        });
+
+    </script>
+</body>
+</html>
