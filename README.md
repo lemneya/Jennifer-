@@ -4,19 +4,27 @@ A lightweight, static HTML app that suggests tasks, document tags, and time entr
 
 ## Run
 - Open `index.html` directly in your browser.
+- For development styles with Tailwind JIT:
+  ```bash
+  npm install
+  npm run watch:css
+  # open index.html (the CSS will update as you edit classes)
+  ```
+
+## Build CSS
+- Generate a minimized CSS bundle:
+  ```bash
+  npm run build:css
+  ```
+  This writes `public/styles.css` which `index.html` loads.
 
 ## Accessibility
 - Includes an accessible modal dialog (keyboard + Escape, focus handling)
 - Live announcements for dynamic suggestions (`aria-live="polite"`)
 
 ## Production tips
-- Replace Tailwind CDN with a built CSS bundle so only used utilities ship:
-  - Using Tailwind CLI:
-    ```bash
-    npm create tailwind@latest
-    # adapt to generate a minimal CSS that includes used utilities
-    ```
-- Keep the Google Fonts preconnects. Consider self-hosting fonts for better privacy and performance.
+- Keep using the built CSS (no CDN) for faster loads and deterministic styling.
+- Consider pinning font files locally for improved privacy and reliability.
 - Serve with proper cache headers.
 
 ## License
